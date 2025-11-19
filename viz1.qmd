@@ -43,7 +43,7 @@ execute:
         }
       }
     },
-    "mark": "line",
+    "mark": {"type": "line", "point": true, "tooltip": true},
     "width": 500,
     "encoding": {
       "x": {
