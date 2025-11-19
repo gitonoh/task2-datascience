@@ -1,15 +1,5 @@
 ---
-title: "Smartphone Market Share Over Time"
-format: html
-execute:
-  echo: false
-  warning: false
-  message: false
----
-
-```{=html}
----
-title: "Smartphone Market Share Over Time"
+title: "Assignment 2: Visualization"
 format: html
 execute:
   echo: false
@@ -37,7 +27,7 @@ execute:
     },
     "transform": [
       {
-        "fold": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei", "Google"],
+        "fold": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei","Google","Infinix","Tecno","OnePlus","Honor","Itel","Nokia"],
         "as": ["vendor", "share"]
       }
     ],
@@ -47,9 +37,9 @@ execute:
         "fields": ["vendor"],
         "bind": {
           "input": "select",
-          "options": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei", "Google"],
-          "labels": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei", "Google"],
-          "name": "Select vendor:"
+          "options": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei","Google","Infinix","Tecno","OnePlus","Honor","Itel","Nokia"],
+          "labels": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei","Google","Infinix","Tecno","OnePlus","Honor","Itel","Nokia"],
+          "name": "Select vendor: "
         }
       }
     },
@@ -59,11 +49,8 @@ execute:
       "x": {
         "field": "Date",
         "type": "temporal",
-        "title": "Month",
-        "axis": {
-          "format": "%b %Y",
-          "labelAngle": -45
-        }
+        "title": null,
+        "axis": {"format": "%b %Y", "labelAngle": -45}
       },
       "y": {
         "field": "share",
@@ -71,7 +58,14 @@ execute:
         "title": "Market Share (%)",
         "axis": {"format": ".2f"}
       },
-      "color": {"field": "vendor", "type": "nominal"},
+      "color": {
+        "field": "vendor",
+        "type": "nominal",
+        "legend": {
+          "orient": "right",
+          "title": "Vendor"
+          }
+      },
       "opacity": {
         "condition": {"selection": "vendorSelect", "value": 1},
         "value": 0.1
@@ -83,8 +77,7 @@ execute:
       ]
     },
     "config": {
-      "view": {"stroke": "transparent"},
-      "legend": {"orient": "bottom"}
+      "view": {"stroke": "transparent"}
     }
   };
   vegaEmbed("#vis", spec);
