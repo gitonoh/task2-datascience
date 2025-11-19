@@ -1,0 +1,96 @@
+---
+title: "Smartphone Market Share Over Time"
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{=html}
+---
+title: "Smartphone Market Share Over Time"
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{=html}
+<div id="vis"></div>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script>
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": {
+      "text": "Smartphone Market Share Over Time",
+      "subtitle": "Monthly data from Oct 2024 to Nov 2025",
+      "anchor": "start",
+      "fontSize": 16
+    },
+    "data": {
+      "url": "vendor-ww-monthly-202410-202510.csv",
+      "format": {"type": "csv"}
+    },
+    "transform": [
+      {
+        "fold": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei", "Google"],
+        "as": ["vendor", "share"]
+      }
+    ],
+    "selection": {
+      "vendorSelect": {
+        "type": "multi",
+        "fields": ["vendor"],
+        "bind": {
+          "input": "select",
+          "options": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei", "Google"],
+          "labels": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei", "Google"],
+          "name": "Select vendor:"
+        }
+      }
+    },
+    "mark": "line",
+    "width": 500,
+    "encoding": {
+      "x": {
+        "field": "Date",
+        "type": "temporal",
+        "title": "Month",
+        "axis": {
+          "format": "%b %Y",
+          "labelAngle": -45
+        }
+      },
+      "y": {
+        "field": "share",
+        "type": "quantitative",
+        "title": "Market Share (%)",
+        "axis": {"format": ".2f"}
+      },
+      "color": {"field": "vendor", "type": "nominal"},
+      "opacity": {
+        "condition": {"selection": "vendorSelect", "value": 1},
+        "value": 0.1
+      },
+      "tooltip": [
+        {"field": "vendor", "type": "nominal"},
+        {"field": "Date", "type": "temporal"},
+        {"field": "share", "type": "quantitative"}
+      ]
+    },
+    "config": {
+      "view": {"stroke": "transparent"},
+      "legend": {"orient": "bottom"}
+    }
+  };
+  vegaEmbed("#vis", spec);
+</script>
+<p style="font-size: 0.9em; color: gray;">
+  Source: <a href="https://gs.statcounter.com/vendor-market-share/mobile" target="_blank">StatCounter Global Stats</a>
+</p>
+
+
