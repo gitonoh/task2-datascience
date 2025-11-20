@@ -1,3 +1,7 @@
+<!--
+# Current visuzaliation on the website is not too ugly. Yet selecting a single vendor requires clicking on all the other vendors. This inconvenience would amplify as more vendors are added to the spaghetti chart.
+# We address this issue with vega-lite, especially utilizing the "selection", "opacity", and "tooltip" features .
+-->
 ---
 title: "Assignment 2: Visualization"
 format: html
@@ -14,50 +18,79 @@ execute:
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 <script>
   const spec = {
+    // Link to the Vega-Lite JSON schema. Helpful for editors and validation.
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+
+    // Title block: supports text and subtitle. `anchor` controls alignment.
     "title": {
       "text": "Smartphone Market Share Over Time",
       "subtitle": "Monthly data from Oct 2024 to Nov 2025",
       "anchor": "start",
       "fontSize": 16
     },
+
+    // Data source: here we load a local CSV file included in the same folder.
+    // Vega-Lite supports many formats (csv, json, topojson, etc.).
     "data": {
       "url": "vendor-ww-monthly-202410-202510.csv",
       "format": {"type": "csv"}
     },
+
+    // Transformations: used to reshape or compute new fields before encoding.
+    // `fold` converts wide-form data (columns per vendor) into long-form
+    // with two new fields: `vendor` (name) and `share` (value).
     "transform": [
       {
         "fold": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei","Google","Infinix","Tecno","OnePlus","Honor","Itel","Nokia"],
         "as": ["vendor", "share"]
       }
     ],
+
+    // Interaction: `selection` lets users interact with the chart.
+    // This `multi` selection binds to an HTML <select> input so users can
+    // choose one or more vendors. Selections can then be referenced in
+    // encodings (e.g., to change opacity when a vendor is not selected).
     "selection": {
       "vendorSelect": {
         "type": "multi",
         "fields": ["vendor"],
         "bind": {
           "input": "select",
+          // `options` lists values to appear in the dropdown.
           "options": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei","Google","Infinix","Tecno","OnePlus","Honor","Itel","Nokia"],
           "labels": ["Apple","Samsung","Xiaomi","Vivo","Oppo","Realme","Motorola","Huawei","Google","Infinix","Tecno","OnePlus","Honor","Itel","Nokia"],
           "name": "Select vendor: "
         }
       }
     },
+
+    // Mark defines the basic graphical primitive: a line chart with points.
+    // `tooltip: true` enables browser tooltips for points by default (but
+    // we also specify a detailed tooltip encoding below).
     "mark": {"type": "line", "point": true, "tooltip": true},
+
+    // Chart size in pixels. You can also use "width": "container" in Vega-Lite v5.
     "width": 500,
+
+    // Encoding maps data fields to visual channels (x, y, color, etc.).
     "encoding": {
+      // X-axis: time values. `temporal` tells Vega-Lite to parse dates.
       "x": {
         "field": "Date",
         "type": "temporal",
         "title": null,
         "axis": {"format": "%b %Y", "labelAngle": -45}
       },
+
+      // Y-axis: quantitative numeric values representing market share.
       "y": {
         "field": "share",
         "type": "quantitative",
         "title": "Market Share (%)",
         "axis": {"format": ".2f"}
       },
+
+      // Color differentiates vendors. `nominal` is used for categorical data.
       "color": {
         "field": "vendor",
         "type": "nominal",
@@ -66,16 +99,24 @@ execute:
           "title": "Vendor"
           }
       },
+
+      // Opacity with a condition: selected vendors have full opacity (1),
+      // others are dimmed (0.1). This highlights user-selected series.
       "opacity": {
         "condition": {"selection": "vendorSelect", "value": 1},
         "value": 0.1
       },
+
+      // Tooltip: specify which fields appear in the hover tooltip and their types.
       "tooltip": [
         {"field": "vendor", "type": "nominal"},
         {"field": "Date", "type": "temporal"},
         {"field": "share", "type": "quantitative"}
       ]
     },
+
+    // Config tweaks the default look-and-feel. Removing the view stroke
+    // removes the faint border around the chart area for a cleaner look.
     "config": {
       "view": {"stroke": "transparent"}
     }
