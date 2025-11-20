@@ -66,7 +66,7 @@ ul.task-list li input[type="checkbox"] {
 
 <!--
 # Current visuzaliation on the website is not too ugly. Yet selecting a single vendor requires clicking on all the other vendors. This inconvenience would amplify as more vendors are added to the spaghetti chart.
-# We address this issue with vega-lite, especially utilizing the "selection", "opacity", and "tooltip" features .
+# We address this issue with vega-lite, utilizing the `selection`, `opacity`, and `tooltip` features .
 -->
 <div id="vis">
 
@@ -103,14 +103,16 @@ ul.task-list li input[type="checkbox"] {
         "as": ["vendor", "share"]
       }
     ],
-
-    // Interaction: `selection` lets users interact with the chart.
-    // This `multi` selection binds to an HTML <select> input so users can
-    // choose one or more vendors. Selections can then be referenced in
-    // encodings (e.g., to change opacity when a vendor is not selected).
+     // Interaction: define a single-value selection named `vendorSelect`.
+     // This selection is bound to an HTML <select> input (see `bind` below),
+     // listens for `mouseover` events, and tracks the `vendor` field.
+     // The selection is referenced by encodings (e.g., `opacity`) to highlight
+     // the chosen vendor while dimming others; the dropdown options are defined
+     // in the selection's `bind` configuration.
     "selection": {
       "vendorSelect": {
-        "type": "multi",
+        "type": "single",
+        "on": "mouseover",
         "fields": ["vendor"],
         "bind": {
           "input": "select",
@@ -152,10 +154,8 @@ ul.task-list li input[type="checkbox"] {
       "color": {
         "field": "vendor",
         "type": "nominal",
-        "legend": {
-          "orient": "right",
-          "title": "Vendor"
-          }
+        "legend": {"orient": "right", "title": "Vendor"},
+        "scale": {"scheme": "category20"}
       },
 
       // Opacity with a condition: selected vendors have full opacity (1),
